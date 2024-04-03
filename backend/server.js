@@ -16,7 +16,6 @@ mongoose.connect(process.env.URI).then(() => {
   );
 });
 
-
 const createUser = async (name, dob, email, password) => {
   const user = await User.create({
     name: name,
@@ -74,8 +73,27 @@ const getMovies = async () => {
   return response;
 };
 
-getMovies();
+const getPlanets = async () => {
+  const httpResponse = await fetch('https://swapi.dev/api/planets/');
 
+  const response = await httpResponse.json();
+  return response;
+};
+
+const getCharacters = async () => {
+  const httpResponse = await fetch('https://swapi.dev/api/people/');
+
+  const response = await httpResponse.json();
+
+  return response;
+};
+
+const getVehicles = async () => {
+  const httpResponse = await fetch('https://swapi.dev/api/vehicles/');
+
+  const response = await httpResponse.json();
+  return response;
+};
 
 app.get('/', (req, res) => {
   res.send('Hello world!');
@@ -83,4 +101,16 @@ app.get('/', (req, res) => {
 
 app.get('/api/films', async (req, res) => {
   res.send(await getMovies());
+});
+
+app.get('/api/planets', async (req, res) => {
+  res.send(await getPlanets());
+});
+
+app.get('/api/characters', async (req, res) => {
+  res.send(await getCharacters());
+});
+
+app.get('/api/vehicles', async (req, res) => {
+  res.send(await getVehicles());
 });
