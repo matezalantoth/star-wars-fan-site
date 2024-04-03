@@ -11,8 +11,8 @@ mongoose.connect(process.env.URI).then(() => {
   app.listen(
     process.env.PORT,
     console.log(
-      `Backend server running on http://localhost:${process.env.PORT}`
-    )
+      `Backend server running on http://localhost:${process.env.PORT}`,
+    ),
   );
 });
 
@@ -25,6 +25,12 @@ const createUser = async (name, dob, email, password) => {
   });
   return user;
 };
+
+app.patch('/api/user/:id', async (req, res) => {
+  const id = req.params.id;
+  const user = await User.findByIdAndUpdate(id, req.body);
+  res.status(200).json(user);
+});
 
 app.post('/api/users/login', async (req, res) => {
   const { email, password } = req.body;
@@ -44,7 +50,6 @@ app.post('/api/users/login', async (req, res) => {
 
 app.post('/api/users', async (req, res) => {
   try {
-    console.log(req.body);
     const { name, dob, email, password } = req.body;
     if (Date.parse(dob) > Date.now()) {
       return res.status(400).json({ message: 'That is an invalid birthday' });
@@ -67,33 +72,11 @@ app.post('/api/users', async (req, res) => {
 
 const getMovies = async () => {
   const httpResponse = await fetch('https://swapi.dev/api/films/');
-
-  const response = await httpResponse.json();
-  console.log();
-  return response;
-};
-
-const getPlanets = async () => {
-  const httpResponse = await fetch('https://swapi.dev/api/planets/');
-
   const response = await httpResponse.json();
   return response;
 };
 
-const getCharacters = async () => {
-  const httpResponse = await fetch('https://swapi.dev/api/people/');
-
-  const response = await httpResponse.json();
-
-  return response;
-};
-
-const getVehicles = async () => {
-  const httpResponse = await fetch('https://swapi.dev/api/vehicles/');
-
-  const response = await httpResponse.json();
-  return response;
-};
+getMovies();
 
 app.get('/', (req, res) => {
   res.send('Hello world!');
@@ -101,16 +84,4 @@ app.get('/', (req, res) => {
 
 app.get('/api/films', async (req, res) => {
   res.send(await getMovies());
-});
-
-app.get('/api/planets', async (req, res) => {
-  res.send(await getPlanets());
-});
-
-app.get('/api/characters', async (req, res) => {
-  res.send(await getCharacters());
-});
-
-app.get('/api/vehicles', async (req, res) => {
-  res.send(await getVehicles());
 });

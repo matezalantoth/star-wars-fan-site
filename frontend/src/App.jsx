@@ -24,7 +24,13 @@ export const App = () => {
             <Route path='/' element=<MainPage /> />
             <Route path='/' element=<MainPage cookies={cookies} /> />
 
-            <Route path='/profile' element=<ProfilePage cookies={cookies} /> />
+            <Route
+              path='/profile'
+              element=<ProfilePage
+                cookies={cookies}
+                setUserLoginCookies={setUserLoginCookies}
+              />
+            />
 
             <Route
               path='/login'
