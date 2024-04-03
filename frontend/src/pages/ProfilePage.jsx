@@ -1,3 +1,4 @@
+/* eslint-disable react/prop-types */
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { toast, Toaster } from 'react-hot-toast';
@@ -13,6 +14,7 @@ export const ProfilePage = (props) => {
   if (!cookies.user) {
     navigate('/login');
   }
+  console.log(cookies);
   const user = cookies.user;
 
   const handleEditPrompt = () => {

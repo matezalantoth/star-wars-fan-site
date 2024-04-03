@@ -23,7 +23,13 @@ export const App = () => {
       <BrowserRouter>
         <Routes>
           <Route path='/' element={<Navbar cookies={cookies} />}>
-            <Route path='/' element=<MainPage /> />
+            <Route
+              path='/'
+              element=<MainPage
+                cookies={cookies}
+                setUserLoginCookies={setUserLoginCookies}
+              />
+            />
             <Route path='/' element=<MainPage cookies={cookies} /> />
 
             <Route
@@ -49,10 +55,34 @@ export const App = () => {
                 setUserLoginCookies={setUserLoginCookies}
               />
             />
-            <Route path='/characters' element=<CharactersPage /> />
-            <Route path='/planets' element=<PlanetsPage /> />
-            <Route path='/vehicles' element=<VehiclesPage /> />
-            <Route path='/starships' element=<StarshipsPage /> />
+            <Route
+              path='/characters'
+              element=<CharactersPage
+                cookies={cookies}
+                setUserLoginCookies={setUserLoginCookies}
+              />
+            />
+            <Route
+              path='/planets'
+              element=<PlanetsPage
+                cookies={cookies}
+                setUserLoginCookies={setUserLoginCookies}
+              />
+            />
+            <Route
+              path='/vehicles'
+              element=<VehiclesPage
+                cookies={cookies}
+                setUserLoginCookies={setUserLoginCookies}
+              />
+            />
+            <Route
+              path='/starships'
+              element=<StarshipsPage
+                cookies={cookies}
+                setUserLoginCookies={setUserLoginCookies}
+              />
+            />
           </Route>
         </Routes>
         <Toaster />

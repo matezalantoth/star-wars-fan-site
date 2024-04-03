@@ -38,7 +38,6 @@ const fetchData = async (url) => {
 };
 
 const recursive = async (data) => {
-  console.log(data.next);
   if (data.next) {
     const newData = await fetchData(data.next);
     await Planet.create(newData.results);
@@ -58,6 +57,12 @@ app.post('/api/setter', async (req, res) => {
 app.patch('/api/user/:id', async (req, res) => {
   const id = req.params.id;
   const user = await User.findByIdAndUpdate(id, req.body);
+  res.status(200).json(user);
+});
+
+app.get('/api/user/:id', async (req, res) => {
+  const id = req.params.id;
+  const user = await User.findById(id);
   res.status(200).json(user);
 });
 
@@ -89,13 +94,205 @@ app.post('/api/users', async (req, res) => {
       return res.status(409).json({ message: 'Email already in use' });
     }
     const user = await createUser(name, dob, email, password);
-    console.log(user);
+
     if (!user) {
       throw e;
     }
     res.status(201).send(user);
   } catch (e) {
     res.status(500).json({ message: 'Something went wrong on our end' });
+  }
+});
+
+app.patch('/api/user/:id/favourites/films', async (req, res) => {
+  try {
+    const id = req.params.id;
+    const user = await User.findById(id);
+
+    if (!user) {
+      return res.status(404).json({ errorMessage: 'User not found' });
+    }
+    user.favourites.films.push(req.body);
+    await user.save();
+    res
+      .status(200)
+      .json({ message: `${req.body.title} has been added to favourites` });
+  } catch (e) {
+    res.status(500).json({ errorMessage: 'Something went wrong on our end' });
+  }
+});
+
+app.delete('/api/user/:id/favourites/films', async (req, res) => {
+  try {
+    const id = req.params.id;
+    const user = await User.findById(id);
+
+    if (!user) {
+      return res.status(404).json({ errorMessage: 'User not found' });
+    }
+    user.favourites.films = user.favourites.films.filter((char) => {
+      return char._id !== req.body._id;
+    });
+    await user.save();
+    res
+      .status(204)
+      .json({ message: `${req.body.title} has been removed from favourites` });
+  } catch (e) {
+    res.status(500).json({ errorMessage: 'Something went wrong on our end' });
+  }
+});
+
+app.patch('/api/user/:id/favourites/planets', async (req, res) => {
+  try {
+    const id = req.params.id;
+    const user = await User.findById(id);
+
+    if (!user) {
+      return res.status(404).json({ errorMessage: 'User not found' });
+    }
+    user.favourites.planets.push(req.body);
+    await user.save();
+    res
+      .status(200)
+      .json({ message: `${req.body.name} has been added to favourites` });
+  } catch (e) {
+    res.status(500).json({ errorMessage: 'Something went wrong on our end' });
+  }
+});
+
+app.delete('/api/user/:id/favourites/planets', async (req, res) => {
+  try {
+    const id = req.params.id;
+    const user = await User.findById(id);
+
+    if (!user) {
+      return res.status(404).json({ errorMessage: 'User not found' });
+    }
+    user.favourites.planets = user.favourites.planets.filter((planet) => {
+      return planet._id !== req.body._id;
+    });
+    await user.save();
+    res
+      .status(204)
+      .json({ message: `${req.body.name} has been removed from favourites` });
+  } catch (e) {
+    res.status(500).json({ errorMessage: 'Something went wrong on our end' });
+  }
+});
+
+app.patch('/api/user/:id/favourites/characters', async (req, res) => {
+  try {
+    const id = req.params.id;
+    const user = await User.findById(id);
+
+    if (!user) {
+      return res.status(404).json({ errorMessage: 'User not found' });
+    }
+    user.favourites.characters.push(req.body);
+    await user.save();
+    res
+      .status(200)
+      .json({ message: `${req.body.name} has been added to favourites` });
+  } catch (e) {
+    res.status(500).json({ errorMessage: 'Something went wrong on our end' });
+  }
+});
+
+app.delete('/api/user/:id/favourites/characters', async (req, res) => {
+  try {
+    const id = req.params.id;
+    const user = await User.findById(id);
+
+    if (!user) {
+      return res.status(404).json({ errorMessage: 'User not found' });
+    }
+    user.favourites.characters = user.favourites.characters.filter((char) => {
+      return char._id !== req.body._id;
+    });
+    await user.save();
+    res
+      .status(204)
+      .json({ message: `${req.body.name} has been removed from favourites` });
+  } catch (e) {
+    res.status(500).json({ errorMessage: 'Something went wrong on our end' });
+  }
+});
+
+app.patch('/api/user/:id/favourites/spaceships', async (req, res) => {
+  try {
+    const id = req.params.id;
+    const user = await User.findById(id);
+
+    if (!user) {
+      return res.status(404).json({ errorMessage: 'User not found' });
+    }
+    user.favourites.spaceships.push(req.body);
+    await user.save();
+    res
+      .status(200)
+      .json({ message: `${req.body.name} has been added to favourites` });
+  } catch (e) {
+    res.status(500).json({ errorMessage: 'Something went wrong on our end' });
+  }
+});
+
+app.delete('/api/user/:id/favourites/spaceships', async (req, res) => {
+  try {
+    const id = req.params.id;
+    const user = await User.findById(id);
+
+    if (!user) {
+      return res.status(404).json({ errorMessage: 'User not found' });
+    }
+    user.favourites.spaceships = user.favourites.spaceships.filter(
+      (spaceships) => {
+        return spaceships._id !== req.body._id;
+      },
+    );
+    await user.save();
+    res
+      .status(204)
+      .json({ message: `${req.body.name} has been removed from favourites` });
+  } catch (e) {
+    res.status(500).json({ errorMessage: 'Something went wrong on our end' });
+  }
+});
+
+app.patch('/api/user/:id/favourites/vehicles', async (req, res) => {
+  try {
+    const id = req.params.id;
+    const user = await User.findById(id);
+
+    if (!user) {
+      return res.status(404).json({ errorMessage: 'User not found' });
+    }
+    user.favourites.vehicles.push(req.body);
+    await user.save();
+    res
+      .status(200)
+      .json({ message: `${req.body.name} has been added to favourites` });
+  } catch (e) {
+    res.status(500).json({ errorMessage: 'Something went wrong on our end' });
+  }
+});
+
+app.delete('/api/user/:id/favourites/vehicles', async (req, res) => {
+  try {
+    const id = req.params.id;
+    const user = await User.findById(id);
+
+    if (!user) {
+      return res.status(404).json({ errorMessage: 'User not found' });
+    }
+    user.favourites.vehicles = user.favourites.vehicles.filter((vehicle) => {
+      return vehicle._id !== req.body._id;
+    });
+    await user.save();
+    res
+      .status(204)
+      .json({ message: `${req.body.name} has been removed from favourites` });
+  } catch (e) {
+    res.status(500).json({ errorMessage: 'Something went wrong on our end' });
   }
 });
 

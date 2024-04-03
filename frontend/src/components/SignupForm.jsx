@@ -1,7 +1,7 @@
 /* eslint-disable react/prop-types */
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { toast, Toaster } from 'react-hot-toast';
+import { toast } from 'react-hot-toast';
 // import ReCAPTCHA from 'react-google-recaptcha';
 
 export const SignupForm = (props) => {

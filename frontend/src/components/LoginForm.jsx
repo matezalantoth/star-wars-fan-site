@@ -1,7 +1,7 @@
 /* eslint-disable react/prop-types */
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { toast, Toaster } from 'react-hot-toast';
+import { toast } from 'react-hot-toast';
 
 export const LoginForm = (props) => {
   const { cookies, setUserLoginCookies } = props;
@@ -54,7 +54,7 @@ export const LoginForm = (props) => {
             event.preventDefault();
             const data = await handleLogin();
             if (data.message) {
-              showErrorToast(message);
+              showErrorToast(data.message);
             } else {
               setUserLoginCookies(data);
               navigate('/profile');
