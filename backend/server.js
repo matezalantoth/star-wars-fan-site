@@ -46,13 +46,21 @@ app.post('/api/users', async (req, res) => {
   try {
     console.log(req.body);
     const { name, dob, email, password } = req.body;
+    if (Date.parse(dob) > Date.now()) {
+      return res.status(400).json({ message: 'That is an invalid birthday' });
+    }
+    const duplicateUser = await User.findOne({ email: email });
+
+    if (duplicateUser) {
+      return res.status(409).json({ message: 'Email already in use' });
+    }
     const user = await createUser(name, dob, email, password);
+    console.log(user);
     if (!user) {
       throw e;
     }
     res.status(201).send(user);
   } catch (e) {
-    console.error(e);
     res.status(500).json({ message: 'Something went wrong on our end' });
   }
 });
