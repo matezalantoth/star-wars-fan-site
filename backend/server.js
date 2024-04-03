@@ -11,10 +11,11 @@ mongoose.connect(process.env.URI).then(() => {
   app.listen(
     process.env.PORT,
     console.log(
-      `Backend server running on http://localhost:${process.env.PORT}`,
-    ),
+      `Backend server running on http://localhost:${process.env.PORT}`
+    )
   );
 });
+
 
 const createUser = async (name, dob, email, password) => {
   const user = await User.create({
@@ -65,6 +66,21 @@ app.post('/api/users', async (req, res) => {
   }
 });
 
+const getMovies = async () => {
+  const httpResponse = await fetch('https://swapi.dev/api/films/');
+
+  const response = await httpResponse.json();
+  console.log();
+  return response;
+};
+
+getMovies();
+
+
 app.get('/', (req, res) => {
   res.send('Hello world!');
+});
+
+app.get('/api/films', async (req, res) => {
+  res.send(await getMovies());
 });
