@@ -1,6 +1,5 @@
+import { LoginForm } from '../components/LoginForm';
 /* eslint-disable react/prop-types */
-import { LoginForm } from '../Components/LoginForm';
-
 export const LoginPage = (props) => {
   // eslint-disable-next-line react/prop-types
   const { cookies, setUserLoginCookies } = props;
