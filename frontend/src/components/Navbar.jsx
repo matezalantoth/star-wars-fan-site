@@ -1,6 +1,9 @@
+/* eslint-disable react/prop-types */
 import { Link, Outlet } from 'react-router-dom';
 
-export default function Navbar() {
+export default function Navbar(props) {
+  // eslint-disable-next-line react/prop-types
+  const { cookies } = props;
   return (
     <>
       <nav className='bg-gray-800'>
@@ -11,7 +14,8 @@ export default function Navbar() {
                 type='button'
                 className='relative inline-flex items-center justify-center rounded-md p-2 text-gray-400 hover:bg-gray-700 hover:text-white focus:outline-none focus:ring-2 focus:ring-inset focus:ring-white'
                 aria-controls='mobile-menu'
-                aria-expanded='false'>
+                aria-expanded='false'
+              >
                 <span className='absolute -inset-0.5'></span>
                 <span className='sr-only'>Open main menu</span>
               </button>
@@ -31,10 +35,14 @@ export default function Navbar() {
                       <Link to='/'>Main</Link>
                     </li>
                     <li className='text-gray-300 hover:bg-gray-700 hover:text-white rounded-md px-3 py-2 text-sm font-medium'>
-                      <Link to='/login'>login</Link>
+                      <Link to={cookies.user ? '/profile' : '/login'}>
+                        login
+                      </Link>
                     </li>
                     <li className='text-gray-300 hover:bg-gray-700 hover:text-white rounded-md px-3 py-2 text-sm font-medium'>
-                      <Link to='/signup'>signup</Link>
+                      <Link to={cookies.user ? '/profile' : '/signup'}>
+                        signup
+                      </Link>
                     </li>
                     <li className='text-gray-300 hover:bg-gray-700 hover:text-white rounded-md px-3 py-2 text-sm font-medium'>
                       <Link to='/characters'>characters</Link>
@@ -52,7 +60,8 @@ export default function Navbar() {
             <div className='absolute inset-y-0 right-0 flex items-center pr-2 sm:static sm:inset-auto sm:ml-6 sm:pr-0'>
               <button
                 type='button'
-                className='relative rounded-full bg-gray-800 p-1 text-gray-400 hover:text-white focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800'>
+                className='relative rounded-full bg-gray-800 p-1 text-gray-400 hover:text-white focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800'
+              >
                 <span className='absolute -inset-1.5'></span>
               </button>
             </div>
