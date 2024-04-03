@@ -1,7 +1,9 @@
+/* eslint-disable react/prop-types */
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
 
-export const LoginForm = () => {
+export const LoginForm = (props) => {
+  const { cookies, setUserLoginCookies } = props;
   const [userDetails, setUserDetails] = useState({
     email: null,
     password: null,
@@ -45,10 +47,12 @@ export const LoginForm = () => {
             const data = await handleLogin();
             if (data.message) {
               alert(data.message);
+            } else {
+              setUserLoginCookies(data);
             }
           }}
         >
-          Log-in
+          <Link to={cookies.user ? '/profile' : '/login'}>Log-in</Link>
         </button>
       </form>
     </div>
