@@ -5,6 +5,13 @@ const User = new mongoose.Schema({
   dob: { type: Date, required: true },
   email: { type: String, required: true },
   password: { type: String, required: true },
+  favourites: {
+    films: { type: Array, default: [] },
+    planets: { type: Array, default: [] },
+    characters: { type: Array, default: [] },
+    spaceships: { type: Array, default: [] },
+    vehicles: { type: Array, default: [] },
+  },
   createdAt: { type: Date },
   updatedAt: { type: Date },
 });

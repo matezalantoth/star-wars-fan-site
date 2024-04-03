@@ -2,6 +2,11 @@ import mongoose from 'mongoose';
 import express from 'express';
 import dotenv from 'dotenv';
 import User from './Models/User.js';
+import Person from './Models/Person.js';
+import Vehicle from './Models/Vehicle.js';
+import Starship from './Models/Starship.js';
+import Planet from './Models/Planet.js';
+import Film from './Models/Film.js';
 dotenv.config();
 const app = express();
 app.use(express.json());
@@ -25,6 +30,30 @@ const createUser = async (name, dob, email, password) => {
   });
   return user;
 };
+
+const fetchData = async (url) => {
+  const response = await fetch(url);
+  const data = await response.json();
+  return data;
+};
+
+const recursive = async (data) => {
+  console.log(data.next);
+  if (data.next) {
+    const newData = await fetchData(data.next);
+    await Planet.create(newData.results);
+    if (newData.next) {
+      recursive(newData);
+    }
+  }
+};
+
+app.post('/api/setter', async (req, res) => {
+  const data = await fetchData('https://swapi.dev/api/planets/');
+  await Planet.create(data.results);
+  await recursive(data);
+  res.status(200).send(data);
+});
 
 app.patch('/api/user/:id', async (req, res) => {
   const id = req.params.id;
@@ -70,18 +99,27 @@ app.post('/api/users', async (req, res) => {
   }
 });
 
-const getMovies = async () => {
-  const httpResponse = await fetch('https://swapi.dev/api/films/');
-  const response = await httpResponse.json();
-  return response;
-};
-
-getMovies();
-
-app.get('/', (req, res) => {
-  res.send('Hello world!');
+app.get('/api/films', async (req, res) => {
+  const films = await Film.find();
+  res.send(films);
 });
 
-app.get('/api/films', async (req, res) => {
-  res.send(await getMovies());
+app.get('/api/characters', async (req, res) => {
+  const people = await Person.find();
+  res.send(people);
+});
+
+app.get('/api/planets', async (req, res) => {
+  const planets = await Planet.find();
+  res.send(planets);
+});
+
+app.get('/api/starships', async (req, res) => {
+  const starships = await Starship.find();
+  res.send(starships);
+});
+
+app.get('/api/vehicles', async (req, res) => {
+  const vehicles = await Vehicle.find();
+  res.send(vehicles);
 });

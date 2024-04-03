@@ -6,10 +6,8 @@ export const MainPage = () => {
   useEffect(() => {
     const fetchMovieData = async () => {
       const httpResponse = await fetch('/api/films');
-
       const response = await httpResponse.json();
-
-      setMovies(response.results);
+      setMovies(response);
     };
     fetchMovieData();
   }, []);

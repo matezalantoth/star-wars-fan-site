@@ -53,6 +53,9 @@ export default function Navbar(props) {
                     <li className='text-gray-300 hover:bg-gray-700 hover:text-white rounded-md px-3 py-2 text-sm font-medium'>
                       <Link to='/vehicles'>vehicles</Link>
                     </li>
+                    <li className='text-gray-300 hover:bg-gray-700 hover:text-white rounded-md px-3 py-2 text-sm font-medium'>
+                      <Link to='/starships'>starships</Link>
+                    </li>
                   </ul>
                 </div>
               </div>

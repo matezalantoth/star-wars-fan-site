@@ -9,7 +9,7 @@ export const Planets = () => {
 
       const response = await httpResponse.json();
 
-      setPlanets(response.results);
+      setPlanets(response);
     };
     fetchMovieData();
   }, []);

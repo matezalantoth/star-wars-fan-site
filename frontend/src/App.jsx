@@ -8,6 +8,8 @@ import { CharactersPage } from './pages/CharactersPage';
 import { PlanetsPage } from './pages/PlanetsPage';
 import { VehiclesPage } from './pages/VehiclesPage';
 import Navbar from './components/Navbar';
+import { StarshipsPage } from './pages/StarshipsPage';
+import { Toaster } from 'react-hot-toast';
 
 export const App = () => {
   const [cookies, setCookie] = useCookies(['user']);
@@ -50,8 +52,10 @@ export const App = () => {
             <Route path='/characters' element=<CharactersPage /> />
             <Route path='/planets' element=<PlanetsPage /> />
             <Route path='/vehicles' element=<VehiclesPage /> />
+            <Route path='/starships' element=<StarshipsPage /> />
           </Route>
         </Routes>
+        <Toaster />
       </BrowserRouter>
     </CookiesProvider>
   );

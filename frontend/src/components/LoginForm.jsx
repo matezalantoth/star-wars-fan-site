@@ -1,6 +1,7 @@
 /* eslint-disable react/prop-types */
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import { toast, Toaster } from 'react-hot-toast';
 
 export const LoginForm = (props) => {
   const { cookies, setUserLoginCookies } = props;
@@ -9,6 +10,8 @@ export const LoginForm = (props) => {
     email: null,
     password: null,
   });
+  const showErrorToast = (message) => toast.error(message);
+  const showSuccessToast = (message) => toast.success(message);
 
   if (cookies.user) {
     navigate('/profile');
@@ -51,10 +54,11 @@ export const LoginForm = (props) => {
             event.preventDefault();
             const data = await handleLogin();
             if (data.message) {
-              alert(data.message);
+              showErrorToast(message);
             } else {
               setUserLoginCookies(data);
               navigate('/profile');
+              showSuccessToast('Successfully signed in!');
             }
           }}
         >
