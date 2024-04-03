@@ -1,8 +1,13 @@
+/* eslint-disable react/prop-types */
 import { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+// import ReCAPTCHA from 'react-google-recaptcha';
 
-export const SignupForm = () => {
+export const SignupForm = (props) => {
+  const { cookies, setUserLoginCookies } = props;
   const [newUserData, setNewUserData] = useState({});
   const [submittable, setSubmittable] = useState(false);
+  const navigate = useNavigate();
   useEffect(() => {
     if (
       newUserData.name &&
@@ -13,6 +18,10 @@ export const SignupForm = () => {
       setSubmittable(true);
     }
   }, [newUserData]);
+
+  if (cookies.user) {
+    navigate('/profile');
+  }
 
   const handleSignup = async (event) => {
     event.preventDefault();
@@ -68,6 +77,8 @@ export const SignupForm = () => {
               alert(data.message);
             } else {
               console.log(data);
+              setUserLoginCookies(true);
+              navigate('/profile');
               alert('signup successful');
             }
           });
@@ -76,6 +87,7 @@ export const SignupForm = () => {
       >
         Sign up
       </button>
+      {/* <ReCAPTCHA sitekey={process.env.REACT_APP_SITE_KEY} /> */}
     </form>
   );
 };
