@@ -20,15 +20,12 @@ export const App = () => {
     <CookiesProvider>
       <BrowserRouter>
         <Routes>
-          <Route path='/' element={<Navbar />}>
+          <Route path='/' element={<Navbar cookies={cookies} />}>
             <Route path='/' element=<MainPage /> />
             <Route path='/' element=<MainPage cookies={cookies} /> />
-            cookie.user ?{' '}
-            <Route
-              path='/profile'
-              element=<ProfilePage cookies={cookies} />
-            />{' '}
-            :{' '}
+
+            <Route path='/profile' element=<ProfilePage cookies={cookies} /> />
+
             <Route
               path='/login'
               element=<LoginPage
@@ -36,6 +33,7 @@ export const App = () => {
                 setUserLoginCookies={setUserLoginCookies}
               />
             />
+
             <Route
               path='/signup'
               element=<SignupPage

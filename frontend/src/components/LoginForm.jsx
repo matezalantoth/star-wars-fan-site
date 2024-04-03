@@ -1,13 +1,18 @@
 /* eslint-disable react/prop-types */
 import { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 
 export const LoginForm = (props) => {
   const { cookies, setUserLoginCookies } = props;
+  const navigate = useNavigate();
   const [userDetails, setUserDetails] = useState({
     email: null,
     password: null,
   });
+
+  if (cookies.user) {
+    navigate('/profile');
+  }
 
   const handleLogin = async () => {
     const response = await fetch('/api/users/login', {
@@ -49,10 +54,11 @@ export const LoginForm = (props) => {
               alert(data.message);
             } else {
               setUserLoginCookies(data);
+              navigate('/profile');
             }
           }}
         >
-          <Link to={cookies.user ? '/profile' : '/login'}>Log-in</Link>
+          Log-in
         </button>
       </form>
     </div>
