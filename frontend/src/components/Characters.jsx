@@ -2,6 +2,8 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-hot-toast';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faStar as solidStar } from '@fortawesome/free-solid-svg-icons';
 
 export const Characters = (props) => {
   const { cookies, setUserLoginCookies } = props;
@@ -13,9 +15,7 @@ export const Characters = (props) => {
   useEffect(() => {
     const fetchMovieData = async () => {
       const httpResponse = await fetch('/api/characters');
-
       const response = await httpResponse.json();
-
       setCharacters(response);
     };
     fetchMovieData();
@@ -66,63 +66,65 @@ export const Characters = (props) => {
     });
   };
 
-  return (
+  return characters ? (
     <div>
-      {characters ? (
-        <ul>
-          {characters.map((character) => {
-            return (
-              <li key={character._id}>
-                {' '}
-                <img
-                  className='w-24 h-36 object-contain'
-                  src={`src/assets/people/${
-                    character.url.split('/')[
-                      character.url.split('/').length - 2
-                    ]
-                  }.jpg`}
-                ></img>
-                {character.name}
-                {cookies.user ? (
-                  cookies.user.favourites.characters.some(
-                    (char) => char._id === character._id,
-                  ) ? (
+      <div className=' ml-8 mt-4 flex flex-wrap text-white'>
+        {characters.map((character) => {
+          return (
+            <div key={character._id}>
+              <div className='relative h-70 items-center m-2 text-center text-white shadow-lg '>
+                <div className='w-56 animate-border rounded-md bg-white bg-gradient-to-r from-blue-400 to-green-700 bg-[length:400%_400%] p-1'>
+                  {' '}
+                  <div className='rounded-md bg-slate-900 px-5 py-3 shadow-lg font-bold text-white text-nowrap text-center'>
+                    <img
+                      className=' w-48 h-60 object-contain'
+                      src={`src/assets/people/${
+                        character.url.split('/')[
+                          character.url.split('/').length - 2
+                        ]
+                      }.jpg`}
+                    ></img>
+                    <span className='relative top-2'>{character.name}</span>
+                    <br />
                     <button
-                      onClick={() => {
-                        handleRemoveCharacterToFavourites(character);
-                      }}
-                    >
-                      Remove from favourites
-                    </button>
-                  ) : (
-                    <button
+                      className='relative top-2'
                       onClick={() => {
                         cookies.user
-                          ? handleAddCharacterToFavourites(character)
+                          ? cookies.user.favourites.characters.some((char) => {
+                              return char._id === character._id;
+                            })
+                            ? handleRemoveCharacterToFavourites(character)
+                            : handleAddCharacterToFavourites(character)
                           : navigate('/login');
                       }}
                     >
-                      Add to favourites
+                      {(
+                        cookies.user
+                          ? cookies.user.favourites.characters.some((char) => {
+                              return char._id === character._id;
+                            })
+                          : false
+                      ) ? (
+                        <FontAwesomeIcon
+                          icon={solidStar}
+                          className=' text-yellow-400'
+                        />
+                      ) : (
+                        <FontAwesomeIcon
+                          icon={solidStar}
+                          className='hover:text-yellow-400 text-gray-300'
+                        />
+                      )}
                     </button>
-                  )
-                ) : (
-                  <button
-                    onClick={() => {
-                      cookies.user
-                        ? handleAddCharacterToFavourites(character)
-                        : navigate('/login');
-                    }}
-                  >
-                    Add to favourites
-                  </button>
-                )}
-              </li>
-            );
-          })}
-        </ul>
-      ) : (
-        'Loading...'
-      )}
+                  </div>
+                </div>
+              </div>
+            </div>
+          );
+        })}
+      </div>
     </div>
+  ) : (
+    <div>Loading...</div>
   );
 };

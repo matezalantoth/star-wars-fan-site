@@ -79,7 +79,8 @@ app.post('/api/setter', async (req, res) => {
 
 app.patch('/api/user/:id', async (req, res) => {
   const id = req.params.id;
-  const user = await User.findByIdAndUpdate(id, req.body);
+  const { name, dob, email, password } = req.body;
+  const user = await User.findByIdAndUpdate(id, { name, dob, email, password });
   res.status(200).json(user);
 });
 
