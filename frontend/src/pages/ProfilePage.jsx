@@ -1,12 +1,17 @@
 /* eslint-disable react/prop-types */
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { toast, Toaster } from 'react-hot-toast';
+import { toast } from 'react-hot-toast';
 
 export const ProfilePage = (props) => {
   const { cookies, setUserLoginCookies } = props;
   const [editActive, setEditActive] = useState(false);
   const [userChanges, setUserChanges] = useState(cookies.user);
+  const [selectedFavourites, setSelectedFavourites] = useState({
+    selected: false,
+    array: null,
+    data: null,
+  });
   const navigate = useNavigate();
   const showSuccessToast = (message) => toast.success(message);
   const showErrorToast = (message) => toast.error(message);
@@ -28,6 +33,56 @@ export const ProfilePage = (props) => {
       alert('Incorrect password please try again');
       handleEditPrompt();
     }
+  };
+
+  const handleSelect = (event) => {
+    let selectedArr = event.target.value;
+    if (selectedArr === 'people') {
+      selectedArr = 'characters';
+    }
+    if (selectedArr !== 'selectAFilter') {
+      fetch(`/api/user/${cookies.user._id}/favourites/${selectedArr}`).then(
+        (response) => {
+          response.json().then((data) => {
+            setSelectedFavourites({
+              selected: true,
+              array: event.target.value,
+              data: data,
+            });
+          });
+        },
+      );
+    } else {
+      setSelectedFavourites({
+        selected: false,
+        array: null,
+        data: null,
+      });
+    }
+  };
+
+  const handleRemoveCharacterToFavourites = (fav) => {
+    fetch(
+      `/api/user/${cookies.user._id}/favourites/${selectedFavourites.array}`,
+      {
+        method: 'DELETE',
+        headers: {
+          'Content-type': 'application/json',
+        },
+        body: JSON.stringify(fav),
+      },
+    ).then((response) => {
+      if (response.status === 204) {
+        showSuccessToast('Successfully deleted');
+        cookies.user.favourites[selectedFavourites.array] =
+          cookies.user.favourites[selectedFavourites.array].filter((char) => {
+            return char._id !== fav._id;
+          });
+        setUserLoginCookies(cookies.user);
+      } else {
+        showErrorToast('Something went wrong');
+      }
+    });
   };
 
   const updateUser = async () => {
@@ -105,7 +160,54 @@ export const ProfilePage = (props) => {
           </button>
         </form>
       )}
-      <Toaster />
+      <div>
+        <hr />
+        Favourite{' '}
+        <select
+          onChange={handleSelect}
+          name='favourites'
+          defaultValue={'selectAFilter'}
+        >
+          <option value='selectAFilter'>select an option</option>
+          <option value='films'>Films</option>
+          <option value='people'>Characters</option>
+          <option value='planets'>Planets</option>
+          <option value='spaceships'>Spaceships</option>
+          <option value='vehicles'>Vehicles</option>
+        </select>
+        {selectedFavourites.selected ? (
+          <>
+            {selectedFavourites.data.map((fav) => {
+              return (
+                <li key={fav._id}>
+                  {' '}
+                  <img
+                    className='w-24 h-36 object-contain'
+                    src={`src/assets/${selectedFavourites.array}/${
+                      fav.url
+                        ? fav.url.split('/')[fav.url.split('/').length - 2]
+                        : fav.episode_id
+                    }.jpg`}
+                  ></img>
+                  {fav.name ? fav.name : fav.title}
+                  {
+                    <button
+                      onClick={(event) => {
+                        handleRemoveCharacterToFavourites(fav);
+                        event.target.parentElement.hidden = true;
+                      }}
+                    >
+                      Remove from favourites
+                    </button>
+                  }
+                </li>
+              );
+            })}
+          </>
+        ) : (
+          ''
+        )}
+      </div>
     </>
   );
 };

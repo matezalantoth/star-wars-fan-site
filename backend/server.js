@@ -104,6 +104,19 @@ app.post('/api/users', async (req, res) => {
   }
 });
 
+app.get('/api/user/:id/favourites/:array', async (req, res) => {
+  try {
+    const id = req.params.id;
+    const user = await User.findById(id);
+    if (!user) {
+      return res.status(404).json({ errorMessage: 'User not found' });
+    }
+    res.status(200).json(user.favourites[req.params.array]);
+  } catch (e) {
+    res.status(500).json({ errorMessage: 'Something went wrong on our end' });
+  }
+});
+
 app.patch('/api/user/:id/favourites/films', async (req, res) => {
   try {
     const id = req.params.id;
@@ -297,7 +310,7 @@ app.delete('/api/user/:id/favourites/vehicles', async (req, res) => {
 });
 
 app.get('/api/films', async (req, res) => {
-  const films = await Film.find();
+  const films = await Film.find().sort({ episode_id: 1 });
   res.send(films);
 });
 
