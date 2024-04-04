@@ -40,17 +40,39 @@ const fetchData = async (url) => {
 const recursive = async (data) => {
   if (data.next) {
     const newData = await fetchData(data.next);
-    await Planet.create(newData.results);
+    await Person.create(newData.results);
     if (newData.next) {
       recursive(newData);
     }
   }
 };
 
+const fetchHomeworld = async (person) => {
+  const response = await fetch(person.homeworld);
+  const data = await response.json();
+  return data.name;
+};
+
+const fetchCharFilms = async (person) => {
+  return Promise.all(
+    person.films.map(async (film) => {
+      const response = await fetch(film);
+      const data = await response.json();
+      return data.title;
+    }),
+  );
+};
+
 app.post('/api/setter', async (req, res) => {
-  const data = await fetchData('https://swapi.dev/api/planets/');
-  await Planet.create(data.results);
+  const data = await fetchData('https://swapi.dev/api/people/');
+  await Person.create(data.results);
   await recursive(data);
+  const people = await Person.find({});
+  people.forEach(async (person) => {
+    person.homeworld = await fetchHomeworld(person);
+    person.films = await fetchCharFilms(person);
+    person.save();
+  });
   res.status(200).send(data);
 });
 

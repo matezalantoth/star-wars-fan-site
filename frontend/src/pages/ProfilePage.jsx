@@ -20,7 +20,6 @@ export const ProfilePage = (props) => {
     navigate('/login');
   }
 
-  console.log(cookies);
   const user = cookies.user;
 
   const handleEditPrompt = () => {
@@ -61,23 +60,25 @@ export const ProfilePage = (props) => {
     }
   };
 
-  const handleRemoveCharacterToFavourites = (fav) => {
-    fetch(
-      `/api/user/${cookies.user._id}/favourites/${selectedFavourites.array}`,
-      {
-        method: 'DELETE',
-        headers: {
-          'Content-type': 'application/json',
-        },
-        body: JSON.stringify(fav),
+  const handleRemoveFromFavourites = (fav) => {
+    let url = selectedFavourites.array;
+    if (selectedFavourites.array === 'people') {
+      url = 'characters';
+    }
+    fetch(`/api/user/${cookies.user._id}/favourites/${url}`, {
+      method: 'DELETE',
+      headers: {
+        'Content-type': 'application/json',
       },
-    ).then((response) => {
+      body: JSON.stringify(fav),
+    }).then((response) => {
       if (response.status === 204) {
         showSuccessToast('Successfully deleted');
-        cookies.user.favourites[selectedFavourites.array] =
-          cookies.user.favourites[selectedFavourites.array].filter((char) => {
+        cookies.user.favourites[url] = cookies.user.favourites[url].filter(
+          (char) => {
             return char._id !== fav._id;
-          });
+          },
+        );
         setUserLoginCookies(cookies.user);
       } else {
         showErrorToast('Something went wrong');
@@ -95,6 +96,34 @@ export const ProfilePage = (props) => {
     });
     const data = await response.json();
     return data;
+  };
+
+  const characterElem = (fav) => {
+    return (
+      <>
+        {fav.name}
+        <br />
+        <hr />
+        <p className=' text-xs pt-1 pb-1'>
+          {fav.gender.slice(0, 1).toUpperCase() + fav.gender.slice(1)}
+          <br />
+          {fav.height}cm tall
+          <br />
+          Born on {fav.homeworld} in the
+          <br />
+          year {fav.birth_year}
+          <br />
+        </p>
+        <hr />
+        <p className=' text-xs pt-1 pb-1'>
+          Appeared in:{' '}
+          {fav.films.map((film, i) => {
+            return <p key={i}>{film}</p>;
+          })}
+        </p>
+        <hr />
+      </>
+    );
   };
 
   return (
@@ -149,7 +178,6 @@ export const ProfilePage = (props) => {
               if (data.message) {
                 showErrorToast(data.message);
               } else {
-                console.log('hi');
                 showSuccessToast('Changes saved!');
                 setEditActive(false);
                 setUserLoginCookies(userChanges);
@@ -175,35 +203,58 @@ export const ProfilePage = (props) => {
           <option value='spaceships'>spaceship(s)</option>
           <option value='vehicles'>vehicle(s)</option>
         </select>
+        <br />
         {selectedFavourites.selected ? (
-          <ul>
+          <div className=' ml-8 mt-4 flex flex-wrap'>
             {selectedFavourites.data.map((fav) => {
+              console.log(fav);
               return (
-                <li key={fav._id} className=''>
-                  {' '}
-                  <img
-                    className='w-24 h-36 object-contain'
-                    src={`src/assets/${selectedFavourites.array}/${
-                      fav.url
-                        ? fav.url.split('/')[fav.url.split('/').length - 2]
-                        : fav.episode_id
-                    }.jpg`}
-                  ></img>
-                  {fav.name ? fav.name : fav.title}
-                  {
-                    <button
-                      onClick={(event) => {
-                        handleRemoveCharacterToFavourites(fav);
-                        event.target.parentElement.hidden = true;
-                      }}
-                    >
-                      Remove from favourites
-                    </button>
-                  }
-                </li>
+                <div key={fav._id} className='group [perspective:1000px]'>
+                  <div className='relative h-70 items-center m-2 text-center shadow-xl transition-all duration-1000 [transform-style:preserve-3d] group-hover:[transform:rotateY(180deg)]'>
+                    <div className='w-56 animate-border rounded-md bg-white bg-gradient-to-r from-blue-400 to-green-700 bg-[length:400%_400%] p-1'>
+                      {' '}
+                      <div className='rounded-md bg-slate-900 px-5 py-3 font-bold text-white text-nowrap text-center'>
+                        <img
+                          className=' w-48 h-60 object-contain'
+                          src={`src/assets/${selectedFavourites.array}/${
+                            fav.url
+                              ? fav.url.split('/')[
+                                  fav.url.split('/').length - 2
+                                ]
+                              : fav.episode_id
+                          }.jpg`}
+                        ></img>
+                        <span className='relative top-2'>
+                          {fav.name ? fav.name : fav.title}
+                        </span>
+                      </div>
+                    </div>
+                    <div className='absolute inset-0 h-full w-full rounded-xl bg-black text-center text-white [transform:rotateY(180deg)] [backface-visibility:hidden]'>
+                      <div className='h-full w-full animate-border rounded-md bg-white bg-gradient-to-r from-blue-400 to-green-700 bg-[length:400%_400%] p-1'>
+                        <div className='h-full w-full rounded-md bg-slate-900 px-5 py-3 font-bold text-white text-nowrap text-center'>
+                          <span className='relative top-2'>
+                            {selectedFavourites.array === 'people'
+                              ? characterElem(fav)
+                              : 'hello world'}
+                            <button
+                              className='fixed bottom-3 right-24 hover:bg-red-600 rounded-2xl w-7 h-7 ease-in duration-200'
+                              onClick={(event) => {
+                                handleRemoveFromFavourites(fav);
+                                event.target.parentElement.parentElement.parentElement.parentElement.parentElement.hidden = true;
+                              }}
+                            >
+                              -
+                            </button>
+                          </span>
+                        </div>
+                        <br />
+                      </div>
+                    </div>
+                  </div>
+                </div>
               );
             })}
-          </ul>
+          </div>
         ) : (
           ''
         )}
