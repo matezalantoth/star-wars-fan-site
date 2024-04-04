@@ -14,6 +14,7 @@ export const ProfilePage = (props) => {
   if (!cookies.user) {
     navigate('/login');
   }
+
   console.log(cookies);
   const user = cookies.user;
 

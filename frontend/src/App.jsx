@@ -22,7 +22,15 @@ export const App = () => {
     <CookiesProvider>
       <BrowserRouter>
         <Routes>
-          <Route path='/' element={<Navbar cookies={cookies} />}>
+          <Route
+            path='/'
+            element={
+              <Navbar
+                cookies={cookies}
+                setUserLoginCookies={setUserLoginCookies}
+              />
+            }
+          >
             <Route
               path='/'
               element=<MainPage

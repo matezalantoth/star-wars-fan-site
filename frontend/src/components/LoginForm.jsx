@@ -17,6 +17,25 @@ export const LoginForm = (props) => {
     navigate('/profile');
   }
 
+  const simplifyUserData = (data) => {
+    data.favourites.characters = data.favourites.characters.map((char) => {
+      return { _id: char._id };
+    });
+    data.favourites.films = data.favourites.films.map((char) => {
+      return { _id: char._id };
+    });
+    data.favourites.spaceships = data.favourites.spaceships.map((char) => {
+      return { _id: char._id };
+    });
+    data.favourites.vehicles = data.favourites.vehicles.map((char) => {
+      return { _id: char._id };
+    });
+    data.favourites.planets = data.favourites.planets.map((char) => {
+      return { _id: char._id };
+    });
+    return data;
+  };
+
   const handleLogin = async () => {
     const response = await fetch('/api/users/login', {
       method: 'POST',
@@ -56,7 +75,8 @@ export const LoginForm = (props) => {
             if (data.message) {
               showErrorToast(data.message);
             } else {
-              setUserLoginCookies(data);
+              const simplifiedData = simplifyUserData(data);
+              setUserLoginCookies(simplifiedData);
               navigate('/profile');
               showSuccessToast('Successfully signed in!');
             }
