@@ -42,7 +42,7 @@ const recursive = async (data) => {
     const newData = await fetchData(data.next);
     await Person.create(newData.results);
     if (newData.next) {
-      recursive(newData);
+      await recursive(newData);
     }
   }
 };
@@ -68,10 +68,11 @@ app.post('/api/setter', async (req, res) => {
   await Person.create(data.results);
   await recursive(data);
   const people = await Person.find({});
+  console.log(people.length);
   people.forEach(async (person) => {
     person.homeworld = await fetchHomeworld(person);
     person.films = await fetchCharFilms(person);
-    person.save();
+    await person.save();
   });
   res.status(200).send(data);
 });
