@@ -73,6 +73,10 @@ export const MainPage = (props) => {
           {movies.map((movie) => {
             return (
               <li key={movie._id}>
+                <img
+                  className='w-24 h-36 object-contain'
+                  src={`src/assets/films/${movie.episode_id}.jpg`}
+                ></img>
                 {movie.title}
                 {cookies.user ? (
                   cookies.user.favourites.films.some(

@@ -169,17 +169,17 @@ export const ProfilePage = (props) => {
           defaultValue={'selectAFilter'}
         >
           <option value='selectAFilter'>select an option</option>
-          <option value='films'>Films</option>
-          <option value='people'>Characters</option>
-          <option value='planets'>Planets</option>
-          <option value='spaceships'>Spaceships</option>
-          <option value='vehicles'>Vehicles</option>
+          <option value='films'>film(s)</option>
+          <option value='people'>character(s)</option>
+          <option value='planets'>planet(s)</option>
+          <option value='spaceships'>spaceship(s)</option>
+          <option value='vehicles'>vehicle(s)</option>
         </select>
         {selectedFavourites.selected ? (
-          <>
+          <ul>
             {selectedFavourites.data.map((fav) => {
               return (
-                <li key={fav._id}>
+                <li key={fav._id} className=''>
                   {' '}
                   <img
                     className='w-24 h-36 object-contain'
@@ -203,7 +203,7 @@ export const ProfilePage = (props) => {
                 </li>
               );
             })}
-          </>
+          </ul>
         ) : (
           ''
         )}
