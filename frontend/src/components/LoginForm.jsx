@@ -16,6 +16,7 @@ export const LoginForm = (props) => {
   if (cookies.user) {
     navigate('/profile');
   }
+  console.log(cookies.user);
 
   const simplifyUserData = (data) => {
     data.favourites.characters = data.favourites.characters.map((char) => {

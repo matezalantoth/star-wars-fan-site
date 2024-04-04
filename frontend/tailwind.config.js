@@ -10,6 +10,10 @@ export default {
   ],
   theme: {
     extend: {
+      backgroundImage: {
+        'hut-background': "url('/assets/hut.png')",
+        'starwars-background': "url('./assets/starwars.jpg')",
+      },
       animation: {
         border: 'border 4s ease infinite',
       },

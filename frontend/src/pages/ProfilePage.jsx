@@ -1,6 +1,6 @@
+/* eslint-disable no-undef */
 /* eslint-disable react/prop-types */
 import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-hot-toast';
 
 export const ProfilePage = (props) => {
@@ -12,15 +12,11 @@ export const ProfilePage = (props) => {
     array: null,
     data: null,
   });
-  const navigate = useNavigate();
-  const showSuccessToast = (message) => toast.success(message);
-  const showErrorToast = (message) => toast.error(message);
-
-  if (!cookies.user) {
-    navigate('/login');
-  }
 
   const user = cookies.user;
+
+  const showSuccessToast = (message) => toast.success(message);
+  const showErrorToast = (message) => toast.error(message);
 
   const handleEditPrompt = () => {
     const password = prompt(
@@ -108,26 +104,24 @@ export const ProfilePage = (props) => {
           {fav.gender.slice(0, 1).toUpperCase() + fav.gender.slice(1)}
           <br />
           {fav.height}cm tall
-          <br />
-          Born on {fav.homeworld} in the
-          <br />
-          year {fav.birth_year}
+          <br /> Born on {fav.homeworld} in the year <br />
+          {fav.birth_year}
           <br />
         </p>
         <hr />
-        <p className=' text-xs pt-1 pb-1'>
+        <span className=' text-xs pt-1 pb-1'>
           Appeared in:{' '}
           {fav.films.map((film, i) => {
             return <p key={i}>{film}</p>;
           })}
-        </p>
+        </span>
         <hr />
       </>
     );
   };
 
   return (
-    <>
+    <div>
       {!editActive ? (
         <div>
           <h1>{user.name}</h1>
@@ -207,13 +201,12 @@ export const ProfilePage = (props) => {
         {selectedFavourites.selected ? (
           <div className=' ml-8 mt-4 flex flex-wrap'>
             {selectedFavourites.data.map((fav) => {
-              console.log(fav);
               return (
                 <div key={fav._id} className='group [perspective:1000px]'>
-                  <div className='relative h-70 items-center m-2 text-center shadow-xl transition-all duration-1000 [transform-style:preserve-3d] group-hover:[transform:rotateY(180deg)]'>
+                  <div className='relative h-70 items-center m-2 text-center shadow-lg transition-all duration-1000 [transform-style:preserve-3d] group-hover:[transform:rotateY(180deg)]'>
                     <div className='w-56 animate-border rounded-md bg-white bg-gradient-to-r from-blue-400 to-green-700 bg-[length:400%_400%] p-1'>
                       {' '}
-                      <div className='rounded-md bg-slate-900 px-5 py-3 font-bold text-white text-nowrap text-center'>
+                      <div className='rounded-md bg-slate-900 px-5 py-3 shadow-lg font-bold text-white text-nowrap text-center'>
                         <img
                           className=' w-48 h-60 object-contain'
                           src={`src/assets/${selectedFavourites.array}/${
@@ -229,9 +222,9 @@ export const ProfilePage = (props) => {
                         </span>
                       </div>
                     </div>
-                    <div className='absolute inset-0 h-full w-full rounded-xl bg-black text-center text-white [transform:rotateY(180deg)] [backface-visibility:hidden]'>
+                    <div className='absolute inset-0 h-full w-full rounded-xl shadow-lg bg-black text-center text-white [transform:rotateY(180deg)] [backface-visibility:hidden]'>
                       <div className='h-full w-full animate-border rounded-md bg-white bg-gradient-to-r from-blue-400 to-green-700 bg-[length:400%_400%] p-1'>
-                        <div className='h-full w-full rounded-md bg-slate-900 px-5 py-3 font-bold text-white text-nowrap text-center'>
+                        <div className='h-full w-full rounded-md shadow-lg bg-slate-900 px-5 py-3 font-bold text-white text-nowrap text-center'>
                           <span className='relative top-2'>
                             {selectedFavourites.array === 'people'
                               ? characterElem(fav)
@@ -259,6 +252,6 @@ export const ProfilePage = (props) => {
           ''
         )}
       </div>
-    </>
+    </div>
   );
 };
