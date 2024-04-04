@@ -2,6 +2,8 @@
 import { useEffect, useState } from 'react';
 import { toast } from 'react-hot-toast';
 import { useNavigate } from 'react-router-dom';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faStar as solidStar } from '@fortawesome/free-solid-svg-icons';
 
 export const MainPage = (props) => {
   const [movies, setMovies] = useState();
@@ -66,58 +68,61 @@ export const MainPage = (props) => {
     });
   };
 
-  return (
+  return movies ? (
     <div>
-      {movies ? (
-        <ul>
-          {movies.map((movie) => {
-            return (
-              <li key={movie._id}>
-                <img
-                  className='w-24 h-36 object-contain'
-                  src={`src/assets/films/${movie.episode_id}.jpg`}
-                ></img>
-                {movie.title}
-                {cookies.user ? (
-                  cookies.user.favourites.films.some(
-                    (film) => film._id === movie._id,
-                  ) ? (
+      <div className='ml-48 mt-4 flex flex-wrap text-white'>
+        {movies.map((movie) => {
+          return (
+            <div key={movie._id}>
+              <div className='relative items-center m-2 text-center text-white shadow-lg '>
+                <div className='animate-border rounded-md bg-white bg-gradient-to-r from-blue-400 to-green-700 bg-[length:400%_400%] p-1'>
+                  {' '}
+                  <div className='rounded-md bg-slate-900 px-5 py-3 shadow-lg font-bold text-white text-nowrap text-center'>
+                    <img
+                      className='h-128 w-80 object-contain'
+                      src={`src/assets/films/${movie.episode_id}.jpg`}
+                    ></img>
+                    <span className='relative top-2'>{movie.title}</span>
+                    <br />
                     <button
-                      onClick={() => {
-                        handleRemoveFilmToFavourites(movie);
-                      }}
-                    >
-                      Remove from favourites
-                    </button>
-                  ) : (
-                    <button
+                      className='relative top-2'
                       onClick={() => {
                         cookies.user
-                          ? handleAddFilmToFavourites(movie)
+                          ? cookies.user.favourites.films.some((mov) => {
+                              return mov._id === movie._id;
+                            })
+                            ? handleRemoveFilmToFavourites(movie)
+                            : handleAddFilmToFavourites(movie)
                           : navigate('/login');
                       }}
                     >
-                      Add to favourites
+                      {(
+                        cookies.user
+                          ? cookies.user.favourites.films.some((mov) => {
+                              return mov._id === movie._id;
+                            })
+                          : false
+                      ) ? (
+                        <FontAwesomeIcon
+                          icon={solidStar}
+                          className=' text-yellow-400'
+                        />
+                      ) : (
+                        <FontAwesomeIcon
+                          icon={solidStar}
+                          className='hover:text-yellow-400 text-gray-300'
+                        />
+                      )}
                     </button>
-                  )
-                ) : (
-                  <button
-                    onClick={() => {
-                      cookies.user
-                        ? handleAddFilmToFavourites(movie)
-                        : navigate('/login');
-                    }}
-                  >
-                    Add to favourites
-                  </button>
-                )}
-              </li>
-            );
-          })}
-        </ul>
-      ) : (
-        'hi'
-      )}
+                  </div>
+                </div>
+              </div>
+            </div>
+          );
+        })}
+      </div>
     </div>
+  ) : (
+    <div>Loading...</div>
   );
 };

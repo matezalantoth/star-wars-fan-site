@@ -120,18 +120,47 @@ export const ProfilePage = (props) => {
     );
   };
 
+  const filmElem = (fav) => {
+    console.log(fav);
+    return (
+      <>
+        {fav.title}
+        <br />
+        <hr />
+        <p className=' text-xs pt-1 pb-1'>
+          Director: {fav.director}
+          <br />
+          Producer: {fav.producer}
+          <br />
+          Released on {fav.release_date.split('-').join(' ')}
+        </p>
+        <hr />
+        <span className={'flex flex-col  text-xs pt-1 pb-1 text-nowrap'}>
+          {fav.opening_crawl.split('\n').map((line, index) => (
+            <span key={index}>{line}</span>
+          ))}
+        </span>
+        <hr />
+      </>
+    );
+  };
+
   return (
     <div>
       {!editActive ? (
-        <div>
+        <div className='mt-3 ml-6'>
           <h1>{user.name}</h1>
           <h1>{user.email.slice(0, 2) + '...@' + user.email.split('@')[1]}</h1>
           <button onClick={handleEditPrompt}>Edit details</button>
         </div>
       ) : (
-        <form>
-          <label>Name:</label>
+        <form className='w-80 max-w-screen-lg sm:w-96 m-auto text-black'>
+          <label className='block mb-2 text-sm font-medium text-gray-900 dark:text-white'>
+            Name:
+          </label>
+          <br />
           <input
+            className='bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white'
             onChange={(event) => {
               setUserChanges({ ...userChanges, name: event.target.value });
             }}
@@ -139,8 +168,13 @@ export const ProfilePage = (props) => {
             placeholder={user.name}
             required
           />
-          <label>Date Of Birth: </label>
+          <br />
+          <label className='block -mb-4 text-sm font-medium text-gray-900 dark:text-white'>
+            Date Of Birth:{' '}
+          </label>
+          <br />
           <input
+            className='bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white'
             onChange={(event) => {
               setUserChanges({ ...userChanges, date: event.target.value });
             }}
@@ -148,8 +182,13 @@ export const ProfilePage = (props) => {
             placeholder={user.dob}
             required
           />
-          <label>Email: </label>
+          <br />
+          <label className='block -mb-4 text-sm font-medium text-gray-900 dark:text-white'>
+            Email:{' '}
+          </label>
+          <br />
           <input
+            className='bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white'
             onChange={(event) => {
               setUserChanges({ ...userChanges, email: event.target.value });
             }}
@@ -157,15 +196,22 @@ export const ProfilePage = (props) => {
             placeholder={user.email}
             required
           />
-          <label>Password: </label>
+          <br />
+          <label className='block text-sm -mb-4 font-medium text-gray-900 dark:text-white'>
+            Password:{' '}
+          </label>
+          <br />
           <input
+            className='bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white'
             onChange={(event) => {
               setUserChanges({ ...userChanges, password: event.target.value });
             }}
             type='password'
             required
           />
+          <br />
           <button
+            className='w-full text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800'
             onClick={async (event) => {
               event.preventDefault();
               const data = await updateUser();
@@ -182,33 +228,45 @@ export const ProfilePage = (props) => {
           </button>
         </form>
       )}
-      <div>
-        <hr />
+      <br />
+      <br />
+      <br />
+      <br />
+      <br />
+      <div className='ml-6'>
         Favourite{' '}
         <select
           onChange={handleSelect}
           name='favourites'
           defaultValue={'selectAFilter'}
+          className='text-black rounded-md'
         >
           <option value='selectAFilter'>select an option</option>
           <option value='films'>film(s)</option>
           <option value='people'>character(s)</option>
-          <option value='planets'>planet(s)</option>
-          <option value='spaceships'>spaceship(s)</option>
-          <option value='vehicles'>vehicle(s)</option>
         </select>
         <br />
         {selectedFavourites.selected ? (
-          <div className=' ml-8 mt-4 flex flex-wrap'>
+          <div
+            className={
+              (selectedFavourites.array === 'people'
+                ? 'ml-18 mt-4'
+                : ' ml-36 mt-4') + ' flex flex-wrap'
+            }
+          >
             {selectedFavourites.data.map((fav) => {
               return (
                 <div key={fav._id} className='group [perspective:1000px]'>
-                  <div className='relative h-70 items-center m-2 text-center shadow-lg transition-all duration-1000 [transform-style:preserve-3d] group-hover:[transform:rotateY(180deg)]'>
-                    <div className='w-56 animate-border rounded-md bg-white bg-gradient-to-r from-blue-400 to-green-700 bg-[length:400%_400%] p-1'>
+                  <div className='relative items-center m-2 text-center shadow-lg transition-all duration-1000 [transform-style:preserve-3d] group-hover:[transform:rotateY(180deg)]'>
+                    <div className='animate-border rounded-md bg-white bg-gradient-to-r from-blue-400 to-green-700 bg-[length:400%_400%] p-1'>
                       {' '}
                       <div className='rounded-md bg-slate-900 px-5 py-3 shadow-lg font-bold text-white text-nowrap text-center'>
                         <img
-                          className=' w-48 h-60 object-contain'
+                          className={
+                            (selectedFavourites.array === 'people'
+                              ? 'w-48 h-60'
+                              : ' h-128 w-80') + ' object-contain'
+                          }
                           src={`src/assets/${selectedFavourites.array}/${
                             fav.url
                               ? fav.url.split('/')[
@@ -228,9 +286,14 @@ export const ProfilePage = (props) => {
                           <span className='relative top-2'>
                             {selectedFavourites.array === 'people'
                               ? characterElem(fav)
-                              : 'hello world'}
+                              : filmElem(fav)}
                             <button
-                              className='fixed bottom-3 right-24 hover:bg-red-600 rounded-2xl w-7 h-7 ease-in duration-200'
+                              className={
+                                (selectedFavourites.array === 'people'
+                                  ? 'fixed bottom-3 left-20 ml-7'
+                                  : 'fixed bottom-5 left-36 ml-7') +
+                                ' hover:bg-red-600 rounded-2xl w-7 h-7 ease-in duration-200'
+                              }
                               onClick={(event) => {
                                 handleRemoveFromFavourites(fav);
                                 event.target.parentElement.parentElement.parentElement.parentElement.parentElement.hidden = true;

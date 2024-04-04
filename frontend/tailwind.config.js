@@ -10,6 +10,9 @@ export default {
   ],
   theme: {
     extend: {
+      spacing: {
+        '128': '26rem',
+      },
       backgroundImage: {
         'hut-background': "url('/assets/hut.png')",
         'starwars-background': "url('./assets/starwars.jpg')",
