@@ -89,7 +89,7 @@ export const MainPage = (props) => {
                     <button
                       className='relative top-2'
                       onClick={() => {
-                        cookies.user.favourites
+                        cookies.user
                           ? cookies.user.favourites.films.some((mov) => {
                               return mov._id === movie._id;
                             })
@@ -99,7 +99,7 @@ export const MainPage = (props) => {
                       }}
                     >
                       {(
-                        cookies.user.favourites
+                        cookies.user
                           ? cookies.user.favourites.films.some((mov) => {
                               return mov._id === movie._id;
                             })

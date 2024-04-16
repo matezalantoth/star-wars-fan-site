@@ -2,10 +2,13 @@
 import { useEffect, useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { toast } from 'react-hot-toast';
+import ReCAPTCHA from 'react-google-recaptcha';
+import { useRef } from 'react';
 
 // import ReCAPTCHA from 'react-google-recaptcha';
 
 export const SignupForm = (props) => {
+  const recaptcha = useRef();
   const { cookies, setUserLoginCookies } = props;
   const [newUserData, setNewUserData] = useState({});
   const [submittable, setSubmittable] = useState(false);
@@ -17,11 +20,12 @@ export const SignupForm = (props) => {
       newUserData.name &&
       newUserData.dob &&
       newUserData.email &&
-      newUserData.password
+      newUserData.password &&
+      recaptcha.current.getValue()
     ) {
       setSubmittable(true);
     }
-  }, [newUserData]);
+  }, [newUserData, recaptcha]);
 
   if (cookies.user) {
     navigate('/profile');
@@ -101,6 +105,7 @@ export const SignupForm = (props) => {
           <button
             onClick={(event) => {
               event.preventDefault();
+
               if (
                 newUserData.password.match(/([a-z?'!0-9])/gi).join('') ===
                 newUserData.password
@@ -125,16 +130,21 @@ export const SignupForm = (props) => {
           >
             Sign up
           </button>
-          <div className='mt-2'>
-            <span className='mt-4 text-center font-normal'>
-              {' '}
-              Already have an account?{' '}
-            </span>
-            <Link to='/login' className='font-medium text-blue-700'>
-              Login!
-            </Link>
-          </div>
+          <ReCAPTCHA
+            className='relative p-2 left-6'
+            ref={recaptcha}
+            sitekey={import.meta.env.VITE_APP_SITE_KEY}
+          />
         </form>
+        <div className='mt-2'>
+          <span className='text-center font-normal'>
+            {' '}
+            Already have an account?{' '}
+          </span>
+          <Link to='/login' className='font-medium text-blue-700'>
+            Login!
+          </Link>
+        </div>
       </div>
     </div>
   );
