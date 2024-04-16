@@ -112,10 +112,11 @@ app.post('/api/users/login', async (req, res) => {
         .status(404)
         .json({ message: 'No account was found matching that email' });
     }
-    validUser.email = email;
-    validUser.password = password;
+
     bcrypt.compare(password, validUser.password, (err, result) => {
       if (result) {
+        validUser.email = email;
+        validUser.password = password;
         return res.status(200).json(validUser);
       } else {
         return res.status(400).json({ message: 'Incorrect password' });
