@@ -90,14 +90,22 @@ export const LoginForm = (props) => {
           <button
             onClick={async (event) => {
               event.preventDefault();
-              const data = await handleLogin();
-              if (data.message) {
-                showErrorToast(data.message);
+
+              if (
+                userDetails.password.match(/([a-z?'!0-9])/gi).join('') ===
+                userDetails.password
+              ) {
+                const data = await handleLogin();
+                if (data.message) {
+                  showErrorToast(data.message);
+                } else {
+                  const simplifiedData = simplifyUserData(data);
+                  setUserLoginCookies(simplifiedData);
+                  navigate('/profile');
+                  showSuccessToast('Successfully signed in!');
+                }
               } else {
-                const simplifiedData = simplifyUserData(data);
-                setUserLoginCookies(simplifiedData);
-                navigate('/profile');
-                showSuccessToast('Successfully signed in!');
+                showErrorToast('That email or password is invalid');
               }
             }}
             type='submit'

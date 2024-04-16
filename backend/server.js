@@ -7,6 +7,7 @@ import Vehicle from './Models/Vehicle.js';
 import Starship from './Models/Starship.js';
 import Planet from './Models/Planet.js';
 import Film from './Models/Film.js';
+import bcrypt from 'bcryptjs';
 dotenv.config();
 const app = express();
 app.use(express.json());
@@ -22,6 +23,9 @@ mongoose.connect(process.env.URI).then(() => {
 });
 
 const createUser = async (name, dob, email, password) => {
+  const salt = await bcrypt.genSalt(10);
+  password = await bcrypt.hash(password, salt);
+  email = await bcrypt.hash(email, salt);
   const user = await User.create({
     name: name,
     dob: dob,
@@ -79,7 +83,10 @@ app.post('/api/setter', async (req, res) => {
 
 app.patch('/api/user/:id', async (req, res) => {
   const id = req.params.id;
-  const { name, dob, email, password } = req.body;
+  let { name, dob, email, password } = req.body;
+  const salt = await bcrypt.genSalt(10);
+  password = await bcrypt.hash(password, salt);
+  email = await bcrypt.hash(email, salt);
   const user = await User.findByIdAndUpdate(id, { name, dob, email, password });
   res.status(200).json(user);
 });
@@ -91,15 +98,29 @@ app.get('/api/user/:id', async (req, res) => {
 });
 
 app.post('/api/users/login', async (req, res) => {
-  const { email, password } = req.body;
+  let { email, password } = req.body;
   try {
-    const foundUser = await User.findOne({ email: email, password: password });
-    if (!foundUser) {
+    const users = await User.find({});
+    let validUser = {};
+
+    users.forEach(async (user) => {
+      const result = bcrypt.compare(email, user.email);
+      validUser = result ? user : {};
+    });
+    if (!validUser.email) {
       return res
         .status(404)
-        .json({ message: 'No account was found matching the email' });
+        .json({ message: 'No account was found matching that email' });
     }
-    return res.status(200).json(foundUser);
+    validUser.email = email;
+    validUser.password = password;
+    bcrypt.compare(password, validUser.password, (err, result) => {
+      if (result) {
+        return res.status(200).json(validUser);
+      } else {
+        return res.status(400).json({ message: 'Incorrect password' });
+      }
+    });
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: 'Something went wrong on our end' });
@@ -112,9 +133,15 @@ app.post('/api/users', async (req, res) => {
     if (Date.parse(dob) > Date.now()) {
       return res.status(400).json({ message: 'That is an invalid birthday' });
     }
-    const duplicateUser = await User.findOne({ email: email });
+    let duplicateUser = {};
+    const users = await User.find({});
+    users.forEach(async (user) => {
+      const result = await bcrypt.compare(email, user.email);
+      duplicateUser = result ? user : {};
+    });
 
-    if (duplicateUser) {
+    if (duplicateUser.email) {
+      console.log(duplicateUser);
       return res.status(409).json({ message: 'Email already in use' });
     }
     const user = await createUser(name, dob, email, password);
@@ -122,8 +149,11 @@ app.post('/api/users', async (req, res) => {
     if (!user) {
       throw e;
     }
+    user.email = email;
+    user.password = password;
     res.status(201).send(user);
   } catch (e) {
+    console.error(e);
     res.status(500).json({ message: 'Something went wrong on our end' });
   }
 });

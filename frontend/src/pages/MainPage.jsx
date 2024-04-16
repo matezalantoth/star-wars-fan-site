@@ -12,6 +12,8 @@ export const MainPage = (props) => {
   const showSuccessToast = (message) => toast.success(message);
   const showErrorToast = (message) => toast.error(message);
 
+  console.log(cookies);
+
   useEffect(() => {
     const fetchMovieData = async () => {
       const httpResponse = await fetch('/api/films');
@@ -87,7 +89,7 @@ export const MainPage = (props) => {
                     <button
                       className='relative top-2'
                       onClick={() => {
-                        cookies.user
+                        cookies.user.favourites
                           ? cookies.user.favourites.films.some((mov) => {
                               return mov._id === movie._id;
                             })
@@ -97,7 +99,7 @@ export const MainPage = (props) => {
                       }}
                     >
                       {(
-                        cookies.user
+                        cookies.user.favourites
                           ? cookies.user.favourites.films.some((mov) => {
                               return mov._id === movie._id;
                             })
