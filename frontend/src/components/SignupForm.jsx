@@ -27,8 +27,7 @@ export const SignupForm = (props) => {
     navigate('/profile');
   }
 
-  const handleSignup = async (event) => {
-    event.preventDefault();
+  const handleSignup = async () => {
     const response = await fetch('/api/users', {
       method: 'POST',
       headers: {
@@ -101,28 +100,25 @@ export const SignupForm = (props) => {
           </div>
           <button
             onClick={(event) => {
-              handleSignup(event).then((data) => {
-                if (data.message) {
-                  showErrorToast(data);
-                } else {
-                  showSuccessToast({ message: 'Succesfully created account!' });
-                  fetch('/api/users/login', {
-                    method: 'POST',
-                    headers: {
-                      'Content-type': 'application/json',
-                    },
-                    body: JSON.stringify({
-                      email: newUserData.email,
-                      password: newUserData.password,
-                    }),
-                  }).then((response) => {
-                    response.json().then((data) => {
-                      setUserLoginCookies(data);
-                      navigate('/profile');
+              event.preventDefault();
+              if (
+                newUserData.password.match(/([a-z?'!0-9])/gi).join('') ===
+                newUserData.password
+              ) {
+                handleSignup(event).then((data) => {
+                  if (data.message) {
+                    showErrorToast(data);
+                  } else {
+                    showSuccessToast({
+                      message: 'Succesfully created account!',
                     });
-                  });
-                }
-              });
+                    setUserLoginCookies(data);
+                    navigate('/profile');
+                  }
+                });
+              } else {
+                showErrorToast('Your password or email is invalid');
+              }
             }}
             className='w-full mt-8 text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800 disabled:bg-blue-800'
             disabled={!submittable}
