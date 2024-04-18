@@ -15,7 +15,7 @@ export default {
       },
       backgroundImage: {
         'hut-background': "url('/assets/hut.png')",
-        'starwars-background': "url('./assets/starwars.jpg')",
+        'starwars-background': "url('./assets/test.png')",
       },
       animation: {
         border: 'border 4s ease infinite',
