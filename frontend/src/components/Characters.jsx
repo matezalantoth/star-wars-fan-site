@@ -68,7 +68,7 @@ export const Characters = (props) => {
 
   return characters ? (
     <div>
-      <div className=' ml-8 mt-4 flex flex-wrap text-white'>
+      <div className='relative md:ml-8 ml-16 left-3 mt-4 flex flex-wrap text-white  '>
         {characters.map((character) => {
           return (
             <div key={character._id}>

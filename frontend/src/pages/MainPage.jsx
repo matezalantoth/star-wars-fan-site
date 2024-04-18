@@ -72,7 +72,7 @@ export const MainPage = (props) => {
 
   return movies ? (
     <div>
-      <div className='ml-48 mt-4 flex flex-wrap text-white'>
+      <div className='md:ml-48 sm:ml-0 mt-4 flex flex-wrap text-white'>
         {movies.map((movie) => {
           return (
             <div key={movie._id}>
