@@ -59,26 +59,31 @@ const fetchHomeworld = async (person) => {
 };
 
 const fetchCharFilms = async (person) => {
+  var films = (await Film.find({}));
+  console.log(films.filter(film => film.episode_id === 2)[0].title)
   return Promise.all(
-    person.films.map(async (film) => {
-      const response = await fetch(film);
-      const data = await response.json();
-      return data.title;
-    }),
+      person.films.map(async (film) => {
+        return films.filter(movie => parseInt(film[film.length -2]) === movie.episode_id)[0].title;
+      }),
   );
 };
 
 app.post('/api/setter', async (req, res) => {
   const data = await fetchData('https://swapi.dev/api/people/');
+  for(let i = 1; i < 7; i++){
+    console.log("https://swapi.dev/api/films/" + i)
+    let film = await (await fetch("https://swapi.dev/api/films/" + i)).json();
+    await Film.create(film)
+  }
   await Person.create(data.results);
   await recursive(data);
   const people = await Person.find({});
-  console.log(people.length);
   people.forEach(async (person) => {
     person.homeworld = await fetchHomeworld(person);
     person.films = await fetchCharFilms(person);
     await person.save();
   });
+
   res.status(200).send(data);
 });
 
