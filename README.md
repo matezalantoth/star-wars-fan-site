@@ -4,7 +4,8 @@ MongoDB Server\
 Recaptcha Secret Key for localhost
 
 ## Startup
-Once you have cloned the repo, make sure to add a .env to both the backend and frontend directories. \
+Once you have cloned the repo, run npm i in both backend and frontend directories.\
+Then make sure to add a .env to both the backend and frontend directories. \
 The backend .env will need to have a database connection URI and a port, it should look somehting like this:\
 \
 `URI="{mongodb connection string}"`\
@@ -13,9 +14,7 @@ The backend .env will need to have a database connection URI and a port, it shou
 make sure to change the vite.config.js proxy `/api` to the port you entered into the backend .env.\
 The frontend .env needs to contain your reCaptcha key\
 \
-`
-REACT_APP_SITE_KEY={recaptchakey}`\
-`SITE_SECRET={recaptchakey}
+`VITE_APP_SITE_KEY={recaptchakey}
 `\
 \
 Now it should be ready to run the populate.\
