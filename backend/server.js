@@ -7,8 +7,6 @@ import Vehicle from './Models/Vehicle.js';
 import Starship from './Models/Starship.js';
 import Planet from './Models/Planet.js';
 import Film from './Models/Film.js';
-import bcrypt from 'bcryptjs';
-
 dotenv.config();
 const app = express();
 app.use(express.json());
@@ -16,17 +14,14 @@ app.use(express.json());
 mongoose.connect(process.env.URI).then(() => {
   console.log('Connected to MongoDB!');
   app.listen(
-    process.env.PORT,
-    console.log(
-      `Backend server running on http://localhost:${process.env.PORT}`,
-    ),
+      process.env.PORT,
+      console.log(
+          `Backend server running on http://localhost:${process.env.PORT}`,
+      ),
   );
 });
 
 const createUser = async (name, dob, email, password) => {
-  const salt = await bcrypt.genSalt(10);
-  password = await bcrypt.hash(password, salt);
-  email = await bcrypt.hash(email, salt);
   const user = await User.create({
     name: name,
     dob: dob,
@@ -89,10 +84,7 @@ app.post('/api/setter', async (req, res) => {
 
 app.patch('/api/user/:id', async (req, res) => {
   const id = req.params.id;
-  let { name, dob, email, password } = req.body;
-  const salt = await bcrypt.genSalt(10);
-  password = await bcrypt.hash(password, salt);
-  email = await bcrypt.hash(email, salt);
+  const { name, dob, email, password } = req.body;
   const user = await User.findByIdAndUpdate(id, { name, dob, email, password });
   res.status(200).json(user);
 });
@@ -104,30 +96,15 @@ app.get('/api/user/:id', async (req, res) => {
 });
 
 app.post('/api/users/login', async (req, res) => {
-  let { email, password } = req.body;
+  const { email, password } = req.body;
   try {
-    const users = await User.find({});
-    let validUser = {};
-
-    users.forEach(async (user) => {
-      const result = bcrypt.compare(email, user.email);
-      validUser = result ? user : {};
-    });
-    if (!validUser.email) {
+    const foundUser = await User.findOne({ email: email, password: password });
+    if (!foundUser) {
       return res
-        .status(404)
-        .json({ message: 'No account was found matching that email' });
+          .status(404)
+          .json({ message: 'No account was found matching the email' });
     }
-
-    bcrypt.compare(password, validUser.password, (err, result) => {
-      if (result) {
-        validUser.email = email;
-        validUser.password = password;
-        return res.status(200).json(validUser);
-      } else {
-        return res.status(400).json({ message: 'Incorrect password' });
-      }
-    });
+    return res.status(200).json(foundUser);
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: 'Something went wrong on our end' });
@@ -140,15 +117,9 @@ app.post('/api/users', async (req, res) => {
     if (Date.parse(dob) > Date.now()) {
       return res.status(400).json({ message: 'That is an invalid birthday' });
     }
-    let duplicateUser = {};
-    const users = await User.find({});
-    users.forEach(async (user) => {
-      const result = await bcrypt.compare(email, user.email);
-      duplicateUser = result ? user : {};
-    });
+    const duplicateUser = await User.findOne({ email: email });
 
-    if (duplicateUser.email) {
-      console.log(duplicateUser);
+    if (duplicateUser) {
       return res.status(409).json({ message: 'Email already in use' });
     }
     const user = await createUser(name, dob, email, password);
@@ -156,11 +127,8 @@ app.post('/api/users', async (req, res) => {
     if (!user) {
       throw e;
     }
-    user.email = email;
-    user.password = password;
     res.status(201).send(user);
   } catch (e) {
-    console.error(e);
     res.status(500).json({ message: 'Something went wrong on our end' });
   }
 });
@@ -189,8 +157,8 @@ app.patch('/api/user/:id/favourites/films', async (req, res) => {
     user.favourites.films.push(req.body);
     await user.save();
     res
-      .status(200)
-      .json({ message: `${req.body.title} has been added to favourites` });
+        .status(200)
+        .json({ message: `${req.body.title} has been added to favourites` });
   } catch (e) {
     res.status(500).json({ errorMessage: 'Something went wrong on our end' });
   }
@@ -209,8 +177,8 @@ app.delete('/api/user/:id/favourites/films', async (req, res) => {
     });
     await user.save();
     res
-      .status(204)
-      .json({ message: `${req.body.title} has been removed from favourites` });
+        .status(204)
+        .json({ message: `${req.body.title} has been removed from favourites` });
   } catch (e) {
     res.status(500).json({ errorMessage: 'Something went wrong on our end' });
   }
@@ -227,8 +195,8 @@ app.patch('/api/user/:id/favourites/planets', async (req, res) => {
     user.favourites.planets.push(req.body);
     await user.save();
     res
-      .status(200)
-      .json({ message: `${req.body.name} has been added to favourites` });
+        .status(200)
+        .json({ message: `${req.body.name} has been added to favourites` });
   } catch (e) {
     res.status(500).json({ errorMessage: 'Something went wrong on our end' });
   }
@@ -247,8 +215,8 @@ app.delete('/api/user/:id/favourites/planets', async (req, res) => {
     });
     await user.save();
     res
-      .status(204)
-      .json({ message: `${req.body.name} has been removed from favourites` });
+        .status(204)
+        .json({ message: `${req.body.name} has been removed from favourites` });
   } catch (e) {
     res.status(500).json({ errorMessage: 'Something went wrong on our end' });
   }
@@ -265,8 +233,8 @@ app.patch('/api/user/:id/favourites/characters', async (req, res) => {
     user.favourites.characters.push(req.body);
     await user.save();
     res
-      .status(200)
-      .json({ message: `${req.body.name} has been added to favourites` });
+        .status(200)
+        .json({ message: `${req.body.name} has been added to favourites` });
   } catch (e) {
     res.status(500).json({ errorMessage: 'Something went wrong on our end' });
   }
@@ -285,8 +253,8 @@ app.delete('/api/user/:id/favourites/characters', async (req, res) => {
     });
     await user.save();
     res
-      .status(204)
-      .json({ message: `${req.body.name} has been removed from favourites` });
+        .status(204)
+        .json({ message: `${req.body.name} has been removed from favourites` });
   } catch (e) {
     res.status(500).json({ errorMessage: 'Something went wrong on our end' });
   }
@@ -303,8 +271,8 @@ app.patch('/api/user/:id/favourites/spaceships', async (req, res) => {
     user.favourites.spaceships.push(req.body);
     await user.save();
     res
-      .status(200)
-      .json({ message: `${req.body.name} has been added to favourites` });
+        .status(200)
+        .json({ message: `${req.body.name} has been added to favourites` });
   } catch (e) {
     res.status(500).json({ errorMessage: 'Something went wrong on our end' });
   }
@@ -319,14 +287,14 @@ app.delete('/api/user/:id/favourites/spaceships', async (req, res) => {
       return res.status(404).json({ errorMessage: 'User not found' });
     }
     user.favourites.spaceships = user.favourites.spaceships.filter(
-      (spaceships) => {
-        return spaceships._id !== req.body._id;
-      },
+        (spaceships) => {
+          return spaceships._id !== req.body._id;
+        },
     );
     await user.save();
     res
-      .status(204)
-      .json({ message: `${req.body.name} has been removed from favourites` });
+        .status(204)
+        .json({ message: `${req.body.name} has been removed from favourites` });
   } catch (e) {
     res.status(500).json({ errorMessage: 'Something went wrong on our end' });
   }
@@ -343,8 +311,8 @@ app.patch('/api/user/:id/favourites/vehicles', async (req, res) => {
     user.favourites.vehicles.push(req.body);
     await user.save();
     res
-      .status(200)
-      .json({ message: `${req.body.name} has been added to favourites` });
+        .status(200)
+        .json({ message: `${req.body.name} has been added to favourites` });
   } catch (e) {
     res.status(500).json({ errorMessage: 'Something went wrong on our end' });
   }
@@ -363,8 +331,8 @@ app.delete('/api/user/:id/favourites/vehicles', async (req, res) => {
     });
     await user.save();
     res
-      .status(204)
-      .json({ message: `${req.body.name} has been removed from favourites` });
+        .status(204)
+        .json({ message: `${req.body.name} has been removed from favourites` });
   } catch (e) {
     res.status(500).json({ errorMessage: 'Something went wrong on our end' });
   }
