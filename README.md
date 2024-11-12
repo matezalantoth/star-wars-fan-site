@@ -1,45 +1,61 @@
+# Star Wars Favourites Project
+
 ## About
-A little project where you can favourite star wars films and characters, and then read about their details in the profile page.
-- Core Features:
-  - Characters Tab
-  - Films Tab
-  - Favouritable Cards
-  - Profile Page
-	  - Edit User Details
-	  - View Favourited Cards
-	  - Read Card Description
-	
-Requirements:
+A small project where you can favourite Star Wars films and characters, and then read about their details on the profile page.
+
+### Core Features:
+- Characters Tab
+- Films Tab
+- Favouritable Cards
+- Profile Page
+  - Edit User Details
+  - View Favourited Cards
+  - Read Card Description
+
+## Requirements:
 - MongoDB Server
-- Recaptcha Secret Key for localhost
+- reCaptcha Secret Key for localhost
 
 ## Built using:
 - React/ Vite
 - Express.js
 - Node.js
 - MongoDB
+
 ## How To Run
-- clone the repo
-- run npm i in both backend and frontend directories.
-- Then make sure to add a .env to both the backend and frontend directories.
-- The backend .env will need to have a database connection URI and a port
--  it should look something like this:
 
-`URI="{mongodb connection string}"`
-`PORT=3000`
+1. Clone the repo.
+2. Run `npm i` in both the `backend` and `frontend` directories.
 
-- make sure to change the `vite.config.js` proxy `/api` to the port you entered into the backend .env.
-- The frontend .env needs to contain your reCaptcha key
+3. Add a `.env` file to both the `backend` and `frontend` directories.
 
-`VITE_APP_SITE_KEY={recaptchakey}
-`
-- Now it should be ready to run the populate.
-- start up the backend with `npm run dev` and open up a terminal to 
-- curl or some form of querying software.
-- Run this curl to populate the database: `curl -X POST http://localhost:{port}/api/setter`
+   - **Backend `.env`** should include the database connection URI and a port. It should look something like this:
+     ```plaintext
+     URI="{mongodb connection string}"
+     PORT=3000
+     ```
+   - Be sure to change the `vite.config.js` proxy `/api` to match the port you entered in the backend `.env`.
 
-Once done, it is now ready to use! Enjoy!
+   - **Frontend `.env`** needs to contain your reCaptcha key:
+     ```plaintext
+     VITE_APP_SITE_KEY={recaptchakey}
+     ```
 
-### Contributors
+4. Now it should be ready to run the populate.
+
+5. Start up the backend:
+    ```bash
+    npm run dev
+    ```
+6. Open up a terminal to use `curl` or any other querying software.
+
+7. Run this `curl` command to populate the database:
+    ```bash
+    curl -X POST http://localhost:{port}/api/setter
+    ```
+
+8. Once done, it is now ready to use! Enjoy!
+
+## Contributors
 - matezalantoth
 - blameaimer
